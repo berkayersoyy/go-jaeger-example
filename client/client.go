@@ -4,11 +4,9 @@ import (
 	"fmt"
 	opentracing "github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
-	"net/http"
-	"time"
-
 	jaeger "github.com/uber/jaeger-client-go"
 	config "github.com/uber/jaeger-client-go/config"
+	"net/http"
 )
 
 func main() {
@@ -33,17 +31,14 @@ func main() {
 	//2
 	clientSpan := tracer.StartSpan("clientspan")
 	defer clientSpan.Finish()
-	time.Sleep(time.Second)
 
-	url := "http://localhost:8083/publish"
+	url := "http://localhost:8080/publish"
 	req, _ := http.NewRequest("GET", url, nil)
 
 	ext.SpanKindRPCClient.Set(clientSpan)
 	ext.HTTPUrl.Set(clientSpan, url)
 	ext.HTTPMethod.Set(clientSpan, "GET")
 
-	// Inject the client span context into the headers
-	//3
 	tracer.Inject(clientSpan.Context(), opentracing.HTTPHeaders, opentracing.HTTPHeadersCarrier(req.Header))
 	resp, _ := http.DefaultClient.Do(req)
 	fmt.Println(resp)
