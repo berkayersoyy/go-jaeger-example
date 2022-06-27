@@ -32,7 +32,7 @@ func main() {
 	clientSpan := tracer.StartSpan("clientspan")
 	defer clientSpan.Finish()
 
-	url := "http://localhost:8080/publish"
+	url := "http://localhost:8080/geterror"
 	req, _ := http.NewRequest("GET", url, nil)
 
 	ext.SpanKindRPCClient.Set(clientSpan)
